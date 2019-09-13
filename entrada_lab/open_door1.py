@@ -8,7 +8,7 @@ import subprocess, datetime
 #Active GPIO
 GPIO.setmode(GPIO.BCM)
 GPIO.setwarnings(False)
-GPIO.setup(22, GPIO.OUT)
+GPIO.setup(4, GPIO.OUT)
 
 #test host
 hosts = ('google.com', 'kernel.org', 'yahoo.com')
@@ -48,13 +48,13 @@ while True:
             estado = int(row[0])
         if estado == 0:
             #os.system('gpio -g mode 22 out')
-            GPIO.output(22, True)
+            GPIO.output(4, True)
             time.sleep(15)
             sql2 = "UPDATE e_extraccion SET estado = 1 WHERE dispositivo='puerta'"
             mycursor.execute(sql2)
             mydb.commit()
             print(mycursor.rowcount, "record affected")
-            GPIO.output(22, False)
+            GPIO.output(4, False)
             sql2 = "UPDATE e_extraccion SET estado = 0 WHERE dispositivo='puerta'"
             mycursor.execute(sql2)
             mydb.commit()
