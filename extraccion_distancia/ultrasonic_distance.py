@@ -136,5 +136,7 @@ if __name__ == '__main__':
             print("OS error: {0}".format(err))
         except:
             print("no controlado")
+        except mysql.connector.Error as err:
+        	print("Something went wrong: {}".format(err))
         finally:
             GPIO.cleanup()
