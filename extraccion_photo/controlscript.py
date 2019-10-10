@@ -19,6 +19,9 @@ import RPi.GPIO as GPIO
 #Library to read CSV
 import csv
 
+#Libary to export image using ssh
+import paramiko
+
 GPIO.setmode(GPIO.BCM)
 GPIO.setwarnings(False)
 GPIO.setup(12, GPIO.OUT)
@@ -28,6 +31,7 @@ GPIO.setup(16, GPIO.OUT)
 
 hosts = ('google.com', 'kernel.org', 'yahoo.com')
 localhost=('10.0.5.246')
+proxy = None
 
 def ping(host):
     ret = subprocess.call(['ping', '-c', '3', '-W', '5', host],
@@ -66,7 +70,7 @@ def get_name(Name):
             break
     return Name[0], "", False
 
-def store(path, name, person):
+def store(path, name, person, photoname):
     while True:
         if(net_is_up() == 0):
             #Connection and insert with mysql complete
@@ -77,6 +81,14 @@ def store(path, name, person):
             mycursor.execute(sql, val)
             mydb.commit()
             print(mycursor.rowcount, "record inserted")
+            #Almacena la imagen en un directorio del servidor para mostrar en pantalla
+            client = paramiko.SSHClient()
+            client.load_system_host_keys()
+            client.set_missing_host_key_policy(paramiko.AutoAddPolicy())
+            client.connect('10.0.5.246', username='lmv-codedata', password='Laboratorio', sock=proxy)
+            ftp_client = client.open_sftp()
+            ftp_client.put(photoname, '/var/www/html/ENTRADA-LMV/Images_Access/'+photoname)
+            ftp_client.close()
             break
 
 def take_photo(name):
@@ -93,7 +105,7 @@ def take_photo(name):
     #print(direc)
     #print(abs_file_path)
     #print("--------------------------------------------------")
-    store(direc, abs_file_path, name)
+    store(direc, abs_file_path, name, real_path)
     GPIO.output(16, False)
     time.sleep(2)
     return False
