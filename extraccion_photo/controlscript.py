@@ -162,5 +162,7 @@ while True:
         print("Measurement stopped by Error")
     except OSError as err:
         print("OS error: {0}".format(err))
-    #except KeyboardInterrupt:
-    #    print("Measurement stopped by User")
+    except KeyboardInterrupt:
+        print("Measurement stopped by User")
+    except:
+        print("Error no controlado"
