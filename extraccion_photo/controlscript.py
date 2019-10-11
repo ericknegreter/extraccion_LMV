@@ -114,10 +114,10 @@ def listen_welcome():
     r = sr.Recognizer()
     m = sr.Microphone()
     with m as source:
-        print("Adjusting noise")
-        r.adjust_for_ambient_noise(source, duration=-1)
-        print("Say something!")
         try:
+            print("Adjusting noise")
+            r.adjust_for_ambient_noise(source, duration=-1)
+            print("Say something!")
             GPIO.output(21, False)
             GPIO.output(12, True)
             audio = r.listen(source, timeout=5, phrase_time_limit=8)
