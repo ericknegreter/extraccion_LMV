@@ -80,16 +80,17 @@ def distance():
  
     return distance
  
-if __name__ == '__main__':
-    while True:
+while True:
+    if __name__ == '__main__':
         try:
             estado = 0
             setup()
+            GPIO.output(13, False)
             while True:
                 dist = distance()
                 print("Measured Distance = %.1f cm" % dist)
                 #time.sleep(1)
-                if(dist >= 35 and dist <= 38):
+                if(dist >= 34 and dist <= 38):
                     if(estado != 0):
                         while True:
                             if(net_is_up() == 0):
@@ -126,17 +127,15 @@ if __name__ == '__main__':
                         #Start led
                         GPIO.output(13, True)
                 time.sleep(5)
-
-            # Reset by pressing CTRL + C
-        except KeyboardInterrupt:
-            print("Measurement stopped by User")
-        except ValueError;
+        #except KeyboardInterrupt:
+        #    print("Measurement stopped by User")
+        except ValueError:
             print("Measurement stopped by error")
         except OSError as err:
             print("OS error: {0}".format(err))
+        except mysql.connector.Error as err:
+            print("Something went wrong: {}".format(err))
         except:
             print("no controlado")
-        except mysql.connector.Error as err:
-        	print("Something went wrong: {}".format(err))
-        finally:
-            GPIO.cleanup()
+        #finally:
+        #    GPIO.cleanup()

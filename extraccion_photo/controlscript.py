@@ -165,4 +165,4 @@ while True:
     except KeyboardInterrupt:
         print("Measurement stopped by User")
     except:
-        print("Error no controlado"
+        print("Error no controlado")
