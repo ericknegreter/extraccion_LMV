@@ -25,9 +25,9 @@ import paramiko
 GPIO.setmode(GPIO.BCM)
 GPIO.setwarnings(False)
 GPIO.setup(12, GPIO.OUT)
-GPIO.setup(21, GPIO.OUT)
+GPIO.setup(7, GPIO.OUT)
 GPIO.setmode(GPIO.BCM)
-GPIO.setup(16, GPIO.OUT)
+GPIO.setup(8, GPIO.OUT)
 
 hosts = ('google.com', 'kernel.org', 'yahoo.com')
 localhost=('10.0.5.246')
@@ -98,15 +98,15 @@ def take_photo(name):
     currentdate = datetime.datetime.now().strftime("%Y-%m-%d_%H%M")
     real_path = currentdate +".jpg"
     abs_file_path = os.path.join(script_dir, real_path)
-    GPIO.output(21, False)
-    GPIO.output(16, True)
+    GPIO.output(7, False)
+    GPIO.output(8, True)
     time.sleep(2)
     #print("--------------------------------------------------")
     #print(direc)
     #print(abs_file_path)
     #print("--------------------------------------------------")
     store(direc, abs_file_path, name, real_path)
-    GPIO.output(16, False)
+    GPIO.output(8, False)
     time.sleep(2)
     return False
 
@@ -118,11 +118,11 @@ def listen_welcome():
             print("Adjusting noise")
             r.adjust_for_ambient_noise(source, duration=-1)
             print("Say something!")
-            GPIO.output(21, False)
+            GPIO.output(7, False)
             GPIO.output(12, True)
             audio = r.listen(source, timeout=5, phrase_time_limit=8)
             GPIO.output(12, False)
-            GPIO.output(21, True)
+            GPIO.output(7, True)
             print("LISTENED")
             print("Trying to recognize")
             x = r.recognize_google(audio, language="es-mx")
@@ -162,7 +162,7 @@ while True:
         print("Measurement stopped by Error")
     except OSError as err:
         print("OS error: {0}".format(err))
-    except KeyboardInterrupt:
-        print("Measurement stopped by User")
-    except:
-        print("Error no controlado")
+    #except KeyboardInterrupt:
+    #    print("Measurement stopped by User")
+    #except:
+    #    print("Error no controlado")

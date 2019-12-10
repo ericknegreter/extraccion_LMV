@@ -6,31 +6,21 @@ import os
 import subprocess, datetime
 
 #GPIO Mode (BOARD / BCM)
-#GPIO.setmode(GPIO.BCM)
-#GPIO.setwarnings(False)
+GPIO.setmode(GPIO.BCM)
+GPIO.setwarnings(False)
 
 #set GPIO Pins
 GPIO_TRIGGER = 5
 GPIO_ECHO = 6
  
 #set GPIO direction (IN / OUT)
-#GPIO.setup(GPIO_TRIGGER, GPIO.OUT)
-#GPIO.setup(GPIO_ECHO, GPIO.IN)
-#GPIO.setup(13, GPIO.OUT)
+GPIO.setup(GPIO_TRIGGER, GPIO.OUT)
+GPIO.setup(GPIO_ECHO, GPIO.IN)
+GPIO.setup(13, GPIO.OUT)
 
 #test host
 hosts = ('google.com', 'kernel.org', 'yahoo.com')
 localhost = ('10.0.5.246')
-
-def setup():
-    #GPIO Mode (BOARD / BCM)
-    GPIO.setmode(GPIO.BCM)
-    GPIO.setwarnings(False)
-
-    #set GPIO direction (IN / OUT)
-    GPIO.setup(GPIO_TRIGGER, GPIO.OUT)
-    GPIO.setup(GPIO_ECHO, GPIO.IN)
-    GPIO.setup(13, GPIO.OUT)
 
 def ping(host):
     ret = subprocess.call(['ping', '-c', '3', '-W', '5', host],
@@ -84,12 +74,10 @@ while True:
     if __name__ == '__main__':
         try:
             estado = 0
-            setup()
             GPIO.output(13, False)
             while True:
                 dist = distance()
                 print("Measured Distance = %.1f cm" % dist)
-                #time.sleep(1)
                 if(dist >= 34 and dist <= 38):
                     if(estado != 0):
                         while True:
@@ -135,7 +123,7 @@ while True:
             print("OS error: {0}".format(err))
         except mysql.connector.Error as err:
             print("Something went wrong: {}".format(err))
-        except:
-            print("no controlado")
+        #except:
+        #    print("no controlado")
         #finally:
         #    GPIO.cleanup()
