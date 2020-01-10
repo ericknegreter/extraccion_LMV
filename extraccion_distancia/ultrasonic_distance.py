@@ -78,7 +78,7 @@ while True:
             while True:
                 dist = distance()
                 print("Measured Distance = %.1f cm" % dist)
-                if(dist >= 34 and dist <= 38):
+                if(dist >= 34.8 and dist <= 38.0):
                     if(estado != 0):
                         while True:
                             if(net_is_up() == 0):
