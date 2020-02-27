@@ -43,19 +43,22 @@ def net_is_up():
 
 while True:
     if(net_is_up() == 0):
-        mydb = mysql.connector.connect(host="10.0.5.246", user="LMV_ADMIN", passwd="LABORATORIOT4", database="LMV")
-        mycursor = mydb.cursor()
-        sql = "SELECT estado FROM e_extraccion WHERE dispositivo = 'luz'"
-        mycursor.execute(sql)
-        records = mycursor.fetchall()
-        print(mycursor.rowcount, "record selected")
-        for row in records:
-            estado = int(row[0])
+        try:
+            mydb = mysql.connector.connect(host="10.0.5.246", user="LMV_ADMIN", passwd="MINIMOT4", database="LMV")
+            mycursor = mydb.cursor()
+            sql = "SELECT estado FROM e_extraccion WHERE dispositivo = 'luz'"
+            mycursor.execute(sql)
+            records = mycursor.fetchall()
+            print(mycursor.rowcount, "record selected")
+            for row in records:
+                estado = int(row[0])
 
-        if estado == 1:
-            GPIO.output(26, False)
-            #os.system('gpio -g mode 18 out')
-        elif estado == 0:
-            GPIO.output(26, True)
-            #os.system('gpio -g mode 18 in')
-        break
+            if estado == 1:
+                GPIO.output(26, False)
+                #os.system('gpio -g mode 18 out')
+            elif estado == 0:
+                GPIO.output(26, True)
+                #os.system('gpio -g mode 18 in')
+            break
+        except mysql.connector.Error as err:
+            print("Something went wrong: {}".format(err))

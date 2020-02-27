@@ -74,7 +74,7 @@ def store(path, name, person, photoname):
     while True:
         if(net_is_up() == 0):
             #Connection and insert with mysql complete
-            mydb = mysql.connector.connect(host="10.0.5.246", user="LMV_ADMIN", passwd="LABORATORIOT4", database="LMV")
+            mydb = mysql.connector.connect(host="10.0.5.246", user="LMV_ADMIN", passwd="MINIMOT4", database="LMV")
             mycursor = mydb.cursor()
             sql = "INSERT INTO imagespath (path, name, person) VALUES (%s, %s, %s)"
             val = (path, name, person)
@@ -162,6 +162,8 @@ while True:
         print("Measurement stopped by Error")
     except OSError as err:
         print("OS error: {0}".format(err))
+    except mysql.connector.Error as err:
+        print("Something went wrong: {}".format(err))
     #except KeyboardInterrupt:
     #    print("Measurement stopped by User")
     #except:
