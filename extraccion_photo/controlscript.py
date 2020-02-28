@@ -12,6 +12,7 @@ import subprocess
 
 #Store Image
 import mysql.connector
+from mysql.connector import Error
 
 #Turn on/off LEDS
 import RPi.GPIO as GPIO
@@ -42,12 +43,12 @@ def ping(host):
 def net_is_up():
     print ("[%s] Checking if network is up..." % str(datetime.datetime.now()))
     
-    xstatus = 1
+    xstatus = 0
     for h in hosts:
         if ping(h):
             if ping(localhost):
                 print ("[%s] Network is up!" % str(datetime.datetime.now()))
-                xstatus = 0
+                xstatus = 1
                 break
 
     if xstatus:
@@ -72,24 +73,28 @@ def get_name(Name):
 
 def store(path, name, person, photoname):
     while True:
-        if(net_is_up() == 0):
-            #Connection and insert with mysql complete
-            mydb = mysql.connector.connect(host="10.0.5.246", user="LMV_ADMIN", passwd="MINIMOT4", database="LMV")
-            mycursor = mydb.cursor()
-            sql = "INSERT INTO imagespath (path, name, person) VALUES (%s, %s, %s)"
-            val = (path, name, person)
-            mycursor.execute(sql, val)
-            mydb.commit()
-            print(mycursor.rowcount, "record inserted")
-            #Almacena la imagen en un directorio del servidor para mostrar en pantalla
-            client = paramiko.SSHClient()
-            client.load_system_host_keys()
-            client.set_missing_host_key_policy(paramiko.AutoAddPolicy())
-            client.connect('10.0.5.246', username='lmv-codedata', password='Laboratorio', sock=proxy)
-            ftp_client = client.open_sftp()
-            ftp_client.put(photoname, '/var/www/html/ENTRADA-LMV/Images_Access/'+photoname)
-            ftp_client.close()
-            break
+        if(net_is_up()):
+            try:
+                #Connection and insert with mysql complete
+                mydb = mysql.connector.connect(host="10.0.5.246", user="LMV_ADMIN", passwd="MINIMOT4", database="LMV")
+                mycursor = mydb.cursor()
+                sql = "INSERT INTO imagespath (path, name, person) VALUES (%s, %s, %s)"
+                val = (path, name, person)
+                mycursor.execute(sql, val)
+                mydb.commit()
+                print(mycursor.rowcount, "record inserted")
+                mydb.close()
+                #Almacena la imagen en un directorio del servidor para mostrar en pantalla
+                client = paramiko.SSHClient()
+                client.load_system_host_keys()
+                client.set_missing_host_key_policy(paramiko.AutoAddPolicy())
+                client.connect('10.0.5.246', username='lmv-codedata', password='Laboratorio', sock=proxy)
+                ftp_client = client.open_sftp()
+                ftp_client.put(photoname, '/var/www/html/ENTRADA-LMV/Images_Access/'+photoname)
+                ftp_client.close()
+                break
+            except mysql.connector.Error as err:
+                print("Something went wrong: {}".format(err))
 
 def take_photo(name):
     script_dir = os.path.dirname(__file__)
@@ -101,10 +106,6 @@ def take_photo(name):
     GPIO.output(24, False)
     GPIO.output(16, True)
     time.sleep(2)
-    #print("--------------------------------------------------")
-    #print(direc)
-    #print(abs_file_path)
-    #print("--------------------------------------------------")
     store(direc, abs_file_path, name, real_path)
     GPIO.output(16, False)
     time.sleep(2)
@@ -127,7 +128,7 @@ def listen_welcome():
             print("Trying to recognize")
             x = r.recognize_google(audio, language="es-mx")
             x = x.split(" ")
-            #print(x)
+            print(x)
             if len(x) != 2:
                 return False, ""
             frase, nombre, estado = get_name(x)
@@ -151,8 +152,6 @@ def listen_welcome():
 
 while True:
     try:
-        #r = sr.Recognizer()
-        #m = sr.Microphone()
         flag_order = True
         flag_start, nam = listen_welcome()
         if flag_start:
@@ -162,8 +161,6 @@ while True:
         print("Measurement stopped by Error")
     except OSError as err:
         print("OS error: {0}".format(err))
-    except mysql.connector.Error as err:
-        print("Something went wrong: {}".format(err))
     #except KeyboardInterrupt:
     #    print("Measurement stopped by User")
     #except:

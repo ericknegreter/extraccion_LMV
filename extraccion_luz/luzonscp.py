@@ -1,4 +1,5 @@
 import mysql.connector
+from mysql.connector import Error
 import time
 import subprocess, datetime
 import RPi.GPIO as GPIO
@@ -26,10 +27,10 @@ def ping(host):
 def net_is_up():
     print ("[%s] Checking if local network is up..." % str(datetime.datetime.now()))
     
-    xstatus = 1
+    xstatus = 0 
     if ping(localhost):
         print ("[%s] Local network is up!" % str(datetime.datetime.now()))
-        xstatus = 0
+        xstatus = 1
         
     if xstatus:
         time.sleep(10)
@@ -39,7 +40,7 @@ def net_is_up():
     return xstatus
 
 while True:
-    if(net_is_up() == 0):
+    if(net_is_up()):
         try:
             mydb = mysql.connector.connect(host="10.0.5.246", user="LMV_ADMIN", passwd="MINIMOT4", database="LMV")
             mycursor = mydb.cursor()
@@ -53,7 +54,6 @@ while True:
             if i == '1':
                 if estado == 0:
                     GPIO.output(26, False)
-                    print("si prendio")
                     #e_extraccion/ Update the register of the e_extraccion table 
                     #Update record in the e_extraccion table of LMV databases
                     sql = "UPDATE e_extraccion SET estado = 1 WHERE dispositivo='luz'"
@@ -63,7 +63,6 @@ while True:
                     #END of mysql
             elif i == '0':
                 if estado == 1:
-                    print('lo apago')
                     GPIO.output(26, True)
                     #Update the record of the e_extraccion table in LMV databases
                     sql = "UPDATE e_extraccion SET estado = 0 WHERE dispositivo='luz'"
@@ -71,6 +70,7 @@ while True:
                     mydb.commit()
                     print(mycursor.rowcount, "record affected.")
                     #END of mysql
+            mydb.close()
             break
         except mysql.connector.Error as err:
             print("Something went wrong: {}".format(err))

@@ -2,6 +2,7 @@
 import RPi.GPIO as GPIO
 import time
 import mysql.connector
+from mysql.connector import Error
 import os 
 import subprocess, datetime
 
@@ -31,10 +32,10 @@ def ping(host):
 def net_is_up():
     print ("[%s] Checking if network is up..." % str(datetime.datetime.now()))
     
-    xstatus = 1
+    xstatus = 0
     if ping(localhost):
         print ("[%s] Network is up!" % str(datetime.datetime.now()))
-        xstatus = 0
+        xstatus = 1
         
     if xstatus:
         time.sleep(10)
@@ -78,42 +79,47 @@ while True:
             while True:
                 dist = distance()
                 print("Measured Distance = %.1f cm" % dist)
+                mydb = mysql.connector.connect(host="10.0.5.246", user="LMV_ADMIN", passwd="MINIMOT4", database="LMV")
+                mycursor = mydb.cursor()
                 if(dist >= 34.8 and dist <= 38.0):
                     if(estado != 0):
                         while True:
-                            if(net_is_up() == 0):
-                                #Connection to database LMV and insert on registro table new field with mysql
-                                #registro
-                                mydb = mysql.connector.connect(host="10.0.5.246", user="LMV_ADMIN", passwd="MINIMOT4", database="LMV")
-                                mycursor = mydb.cursor()
-                                sql = "UPDATE e_extraccion SET estado = 0 WHERE dispositivo='transfer'"
-                                mycursor.execute(sql)
-                                mydb.commit()
-                                print(mycursor.rowcount, "record affected.")
-                                time.sleep(1)
-                                #END of mysql
-                                estado = 0
-                                break 
+                            if(net_is_up()):
+                                try:
+                                    #Connection to database LMV and insert on registro table new field with mysql
+                                    #registro
+                                    sql = "UPDATE e_extraccion SET estado = 0 WHERE dispositivo='transfer'"
+                                    mycursor.execute(sql)
+                                    mydb.commit()
+                                    print(mycursor.rowcount, "record affected.")
+                                    time.sleep(1)
+                                    #END of mysql
+                                    estado = 0
+                                    break 
+                                except mysql.connector.Error as err:
+                                    print("Something went wrong: {}".format(err))
                         #Led start
                         GPIO.output(13, False)
                 else:
                     if(estado != 1):
                         while True:
-                            if(net_is_up() == 0):
-                                #Connection to database LMV and insert on registro table new field with sql
-                                #registro
-                                mydb = mysql.connector.connect(host="10.0.5.246", user="LMV_ADMIN", passwd="MINIMOT4", database="LMV")
-                                mycursor = mydb.cursor()
-                                sql = "UPDATE e_extraccion SET estado = 1 WHERE dispositivo='transfer'"
-                                mycursor.execute(sql)
-                                mydb.commit()
-                                print(mycursor.rowcount, "record affected.")
-                                time.sleep(1)
-                                #END of mysql
-                                estado = 1
-                                break
+                            if(net_is_up()):
+                                try:
+                                    #Connection to database LMV and insert on registro table new field with sql
+                                    #registro
+                                    sql = "UPDATE e_extraccion SET estado = 1 WHERE dispositivo='transfer'"
+                                    mycursor.execute(sql)
+                                    mydb.commit()
+                                    print(mycursor.rowcount, "record affected.")
+                                    time.sleep(1)
+                                    #END of mysql
+                                    estado = 1
+                                    break
+                                except mysql.connector.Error as err:
+                                    print("Something went wrong: {}".format(err))
                         #Start led
                         GPIO.output(13, True)
+                mydb.close()
                 time.sleep(5)
         #except KeyboardInterrupt:
         #    print("Measurement stopped by User")
@@ -121,9 +127,5 @@ while True:
             print("Measurement stopped by error")
         except OSError as err:
             print("OS error: {0}".format(err))
-        except mysql.connector.Error as err:
-            print("Something went wrong: {}".format(err))
         #except:
         #    print("no controlado")
-        #finally:
-        #    GPIO.cleanup()

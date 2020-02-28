@@ -21,10 +21,10 @@ def ping(host):
 def net_is_up():
     print ("[%s] Checking if network is up..." % str(datetime.datetime.now()))
     
-    xstatus = 1
+    xstatus = 0
     if ping(localhost):
         print ("[%s] Network is up!" % str(datetime.datetime.now()))
-        xstatus = 0
+        xstatus = 1
     
     if xstatus:
         time.sleep(10)
@@ -45,25 +45,29 @@ while True:
             time.sleep(20)
             #End the time sleep
             while True:
-                if(net_is_up() == 0):
-                    #Connection to database LMV and insert on temperature and humidity table new field with mysql
-                    #temperature
-                    mydb = mysql.connector.connect(host="10.0.5.246", user="LMV_ADMIN", passwd="MINIMOT4", database="LMV")
-                    mycursor = mydb.cursor()
-                    sql = "INSERT INTO temperature (tmp, area) VALUES (%s, %s)"
-                    val = (temperature, 'extraccion')
-                    mycursor.execute(sql, val)
-                    mydb.commit()
-                    print(mycursor.rowcount, "record inserted.")
-                    #humidity
-                    sql = "INSERT INTO humidity (hum, area) VALUES (%s, %s)"
-                    val = (humidity, 'extraccion')
-                    mycursor.execute(sql, val)
-                    mydb.commit()
-                    print(mycursor.rowcount, "record inserted.")
-                    #END of mysql
-                    print('Temp={0:0.1f}*C  Humidity={1:0.1f}%'.format(temperature, humidity))
-                    break
+                if(net_is_up()):
+                    try:
+                        #Connection to database LMV and insert on temperature and humidity table new field with mysql
+                        #temperature
+                        mydb = mysql.connector.connect(host="10.0.5.246", user="LMV_ADMIN", passwd="MINIMOT4", database="LMV")
+                        mycursor = mydb.cursor()
+                        sql = "INSERT INTO temperature (tmp, area) VALUES (%s, %s)"
+                        val = (temperature, 'extraccion')
+                        mycursor.execute(sql, val)
+                        mydb.commit()
+                        print(mycursor.rowcount, "record inserted.")
+                        #humidity
+                        sql = "INSERT INTO humidity (hum, area) VALUES (%s, %s)"
+                        val = (humidity, 'extraccion')
+                        mycursor.execute(sql, val)
+                        mydb.commit()
+                        print(mycursor.rowcount, "record inserted.")
+                        #END of mysql
+                        print('Temp={0:0.1f}*C  Humidity={1:0.1f}%'.format(temperature, humidity))
+                        mydb.close()
+                        break
+                    except mysql.connector.Error as err:
+                        print("Something went wrong: {}".format(err))
             break    
         else:
             print('Failed to get reading. Try again!')
@@ -71,5 +75,3 @@ while True:
         print("Measurement stopped by Error")
     except OSError as err:
         print("OS error: {0}".format(err))
-    except mysql.connector.Error as err:
-        print("Something went wrong: {}".format(err))
