@@ -26,7 +26,7 @@ def net_is_up():
         print ("[%s] Network is up!" % str(datetime.datetime.now()))
         xstatus = 1
     
-    if xstatus:
+    if not xstatus:
         time.sleep(10)
         print ("[%s] Network is down :(" % str(datetime.datetime.now()))
         time.sleep(25)

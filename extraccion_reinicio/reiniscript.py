@@ -27,14 +27,11 @@ def net_is_up():
     print ("[%s] Checking if network is up..." % str(datetime.datetime.now()))
     
     xstatus = 0
-    for h in hosts:
-        if ping(h):
-            if ping(localhost):
-                print ("[%s] Network is up!" % str(datetime.datetime.now()))
-                xstatus = 1
-                break
+    if ping(localhost):
+        print ("[%s] Network is up!" % str(datetime.datetime.now()))
+        xstatus = 1
         
-    if xstatus:
+    if not xstatus:
         time.sleep(10)
         print ("[%s] Network is down :(" % str(datetime.datetime.now()))
         time.sleep(25)
