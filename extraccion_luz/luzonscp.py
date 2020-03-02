@@ -53,22 +53,22 @@ while True:
     
             if i == '1':
                 if estado == 0:
-                    GPIO.output(26, False)
                     #e_extraccion/ Update the register of the e_extraccion table 
                     #Update record in the e_extraccion table of LMV databases
                     sql = "UPDATE e_extraccion SET estado = 1 WHERE dispositivo='luz'"
                     mycursor.execute(sql)
                     mydb.commit()
                     print(mycursor.rowcount, "record affected.")
+                    GPIO.output(26, False)
                     #END of mysql
             elif i == '0':
                 if estado == 1:
-                    GPIO.output(26, True)
                     #Update the record of the e_extraccion table in LMV databases
                     sql = "UPDATE e_extraccion SET estado = 0 WHERE dispositivo='luz'"
                     mycursor.execute(sql)
                     mydb.commit()
                     print(mycursor.rowcount, "record affected.")
+                    GPIO.output(26, True)
                     #END of mysql
             mydb.close()
             break
