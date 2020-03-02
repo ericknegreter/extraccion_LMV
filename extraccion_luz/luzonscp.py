@@ -32,7 +32,7 @@ def net_is_up():
         print ("[%s] Local network is up!" % str(datetime.datetime.now()))
         xstatus = 1
         
-    if xstatus:
+    if not xstatus:
         time.sleep(10)
         print ("[%s] Local network is down :(" % str(datetime.datetime.now()))
         time.sleep(25)
