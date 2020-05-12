@@ -1,0 +1,40 @@
+{
+	"permisos":[
+		{
+			"persona": ["erick", "eric", "eri", "erik", "ericka", "erika", "erica"],
+			"id": "cero",
+			"name": "Erick Negrete Ramos"
+		},
+		{
+			"persona": "octavio",
+			"id": "uno",
+			"name": "Octavio Patricio García González"
+		},
+		{
+			"persona": "roberto",
+			"id": "dos",
+			"name": "Roberto Javier Mondéjar Canet"
+		},
+		{
+			"persona": ["wendy", "susana"],
+			"id": "tres",
+			"name": "Wendy Susana Hernández Monjaraz"
+		},
+		{
+			"persona": "mauricio", 
+			"id": "cuatro",
+			"name": "Mauricio Díaz Sanchèz"
+		},
+		{
+			"persona": ["jaime", "arturo"],
+			"id": "cinco",
+			"name": "Jaime Arturo Frausto Ramírez"
+		},
+		{
+			"persona": ["cristian", "christian", "yovani"],
+			"id": "seis",
+			"name": "Cristhian Yovani García Covarrubias"
+		}
+
+	]
+}

@@ -5,10 +5,10 @@ from datetime import date, datetime
 import Adafruit_DHT
 
 sensor=Adafruit_DHT.DHT11
-gpio=17
+gpio=7
 humidity, temperature = Adafruit_DHT.read_retry(sensor, gpio)
 peticion1=sys.argv[1]
-cnx1 = mysql.connector.connect( user="LMV_ADMIN", password="LABORATORIOT4", host="10.0.5.246", database='LMV')
+cnx1 = mysql.connector.connect( user="LMV_ADMIN", password="MINIMOT4", host="10.0.5.246", database='LMV')
 cursor1 = cnx1.cursor()
 today1 = datetime.now()
 print("Codigo escaneado:"+peticion1)
