@@ -24,6 +24,8 @@ import json
 #Libary to export image using ssh
 import paramiko
 
+time.sleep(10)
+
 GPIO.setmode(GPIO.BCM)
 GPIO.setwarnings(False)
 GPIO.setup(12, GPIO.OUT)
